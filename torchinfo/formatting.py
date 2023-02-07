@@ -6,6 +6,8 @@ from typing import Any
 from .enums import ColumnSettings, RowSettings, Units, Verbosity
 from .layer_info import LayerInfo
 
+import numpy as np
+
 HEADER_TITLES = {
     ColumnSettings.KERNEL_SIZE: "Kernel Shape",
     ColumnSettings.INPUT_SIZE: "Input Shape",
@@ -103,10 +105,12 @@ class FormattingOptions:
         self, layer_info: LayerInfo, reached_max_depth: bool, total_params: int
     ) -> str:
         """Convert layer_info to string representation of a row."""
+        def calc_mem_to_str(shape):
+            return "{:8.3f} MB | ".format(np.prod(shape)*4/1e6)
         values_for_row = {
             ColumnSettings.KERNEL_SIZE: self.str_(layer_info.kernel_size),
-            ColumnSettings.INPUT_SIZE: self.str_(layer_info.input_size),
-            ColumnSettings.OUTPUT_SIZE: self.str_(layer_info.output_size),
+            ColumnSettings.INPUT_SIZE: calc_mem_to_str(layer_info.input_size) + self.str_(layer_info.input_size),
+            ColumnSettings.OUTPUT_SIZE: calc_mem_to_str(layer_info.output_size) + self.str_(layer_info.output_size),
             ColumnSettings.NUM_PARAMS: layer_info.num_params_to_str(reached_max_depth),
             ColumnSettings.PARAMS_PERCENT: layer_info.params_percent(
                 total_params, reached_max_depth
