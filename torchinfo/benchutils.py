@@ -2,6 +2,7 @@ from functools import wraps
 import time
 from collections import OrderedDict
 DUMP_MODELSUMMARY = False
+DUMP_MODEL_ARCH = True
 
 stats=[]
 
